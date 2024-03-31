@@ -1,0 +1,8 @@
+{
+    "manufacturer": "Plodah",
+    "maintainer": "Plodah",
+    "url": "https://github.com/Plodah",
+    "usb": {
+        "vid": "0x133F"
+    }
+}

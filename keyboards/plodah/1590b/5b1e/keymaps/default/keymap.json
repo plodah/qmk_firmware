@@ -1,0 +1,33 @@
+{
+    "version": 1,
+    "notes": "",
+    "author": "Plodah",
+    "documentation": "\"This file is a QMK Configurator export. You can import this at <https://config.qmk.fm>. It can also be used directly with QMK's source code.\n\nYou can convert this file to a keymap.c using this command: `qmk json2c {keymap}`\n\nYou can compile this keymap using this command: `qmk compile {keymap}`\"\n",
+    "keyboard": "Plodah/1590b/5b1e",
+    "keymap": "plodah_1590b_5b1e_default",
+    "layout": "LAYOUT_all",
+    "config": {
+        "dynamic_keymap": {
+            "layer_count": 2
+        },
+        "features": {}
+    },
+    "encoders": [
+        [
+            {
+                "ccw": "KC_VOLD",
+                "cw": "KC_VOLU"
+            }
+        ],
+        [
+            {
+                "ccw": "_______",
+                "cw": "_______"
+            }
+        ]
+    ],
+    "layers": [
+        ["KC_0", "KC_1", "KC_2", "KC_3", "KC_4", "KC_5"],
+        ["KC_A", "KC_B", "KC_C", "KC_D", "KC_E", "KC_F"]
+    ]
+}

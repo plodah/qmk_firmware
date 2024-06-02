@@ -25,12 +25,7 @@
     },
     "rgblight": {
         "led_count": 4,
-        "max_brightness": 40,
-        "animations": {
-            "breathing": true,
-            "rainbow_mood": true,
-            "rainbow_swirl": true
-        }
+        "max_brightness": 40
     },
     "processor": "atmega32u4",
     "bootloader": "atmel-dfu",

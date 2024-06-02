@@ -29,8 +29,7 @@
     },
     "diode_direction": "COL2ROW",
     "backlight": {
-        "pin": "B7",
-        "levels": 5
+        "pin": "B7"
     },
     "ws2812": {
         "pin": "E2"

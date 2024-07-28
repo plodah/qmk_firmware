@@ -79,7 +79,7 @@
             "multisplash": true,
             "solid_splash": true,
             "solid_multisplash": true
-       },
+        },
         "driver": "is31fl3741",
         "layout": [
             { "matrix": [0, 0], "x": 0, "y": 0, "flags": 4 },
@@ -158,10 +158,6 @@
         "sleep": true
    },
     "rgblight": {
-        "saturation_steps": 8,
-        "brightness_steps": 8,
-        "led_count": 6,
-        "max_brightness": 150,
         "animations": {
             "breathing": true,
             "rainbow_mood": true,
@@ -173,7 +169,11 @@
             "rgb_test": true,
             "alternating": true,
             "twinkle": true
-       }
+        },
+        "brightness_steps": 8,
+        "led_count": 6,
+        "max_brightness": 150,
+        "saturation_steps": 8
    },
     "build": {
         "lto": true

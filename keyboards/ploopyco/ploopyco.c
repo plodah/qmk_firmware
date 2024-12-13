@@ -239,6 +239,13 @@ void pointing_device_init_kb(void) {
     pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
 }
 
+bool led_update_kb(led_t led_state) {
+#if defined(PLOOPY_DRAGSCROLL_ON_SCROLLLOCK_ENABLED)
+    is_drag_scroll = led_state.scroll_lock;
+#endif // PLOOPY_DRAGSCROLL_ON_SCROLLLOCK_ENABLED
+    return true;
+}
+
 void eeconfig_init_kb(void) {
     keyboard_config.dpi_config = PLOOPY_DPI_DEFAULT;
     eeconfig_update_kb(keyboard_config.raw);

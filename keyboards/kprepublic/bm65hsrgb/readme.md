@@ -9,12 +9,12 @@ A 65% hotswap in switch RGB keyboard from KPRepublic.
 * Hardware Availability: [KP Republic](https://kprepublic.com/products/bm65rgb-bm65-rgb-65-hot-swappable-custom-mechanical-keyboard-pcb-programmed-qmk-via-firmware-full-rgb-switch-underglow-type-c?_pos=1&_sid=5b9a6a5d0&_ss=r)
 
 Make example for this keyboard (after setting up your build environment):
-
-    make kprepublic/bm65hsrgb/rev1:default
+    for rev1: make kprepublic/bm65hsrgb/rev1:default
+    for rev2: make kprepublic/bm65hsrgb/rev2:default
 
 Flashing example for this keyboard:
-
-    make kprepublic/bm65hsrgb/rev1:default:flash
+    for rev1: make kprepublic/bm65hsrgb/rev1:default:flash
+    for rev2: make kprepublic/bm65hsrgb/rev2:default:flash
 
 To reset the board into bootloader mode, do one of the following:
 

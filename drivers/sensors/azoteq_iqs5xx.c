@@ -5,6 +5,13 @@
 #include "azoteq_iqs5xx.h"
 #include "pointing_device_internal.h"
 #include "wait.h"
+#include "debug.h"
+#ifdef POINTING_DEVICE_ENABLE
+#    include "report.h"
+#endif
+#ifdef DIGITIZER_ENABLE
+#    include "digitizer.h"
+#endif
 
 #ifndef AZOTEQ_IQS5XX_ADDRESS
 #    define AZOTEQ_IQS5XX_ADDRESS (0x74 << 1)
@@ -15,6 +22,7 @@
 
 #define AZOTEQ_IQS5XX_REG_PRODUCT_NUMBER 0x0000
 #define AZOTEQ_IQS5XX_REG_PREVIOUS_CYCLE_TIME 0x000C
+#define AZOTEQ_IQS5XX_REG_ABSOLUTE_X_POSITION 0x0016
 #define AZOTEQ_IQS5XX_REG_SYSTEM_CONTROL_1 0x0432
 #define AZOTEQ_IQS5XX_REG_REPORT_RATE_ACTIVE 0x057A
 #define AZOTEQ_IQS5XX_REG_IDLE_MODE_TIMEOUT 0x0586
@@ -83,32 +91,20 @@
 #    define AZOTEQ_IQS5XX_EVENT_MODE false
 #endif
 
-#if defined(AZOTEQ_IQS5XX_TPS43)
-#    define AZOTEQ_IQS5XX_WIDTH_MM 43
-#    define AZOTEQ_IQS5XX_HEIGHT_MM 40
-#    define AZOTEQ_IQS5XX_RESOLUTION_X 2048
-#    define AZOTEQ_IQS5XX_RESOLUTION_Y 1792
-#elif defined(AZOTEQ_IQS5XX_TPS65)
-#    define AZOTEQ_IQS5XX_WIDTH_MM 65
-#    define AZOTEQ_IQS5XX_HEIGHT_MM 49
-#    define AZOTEQ_IQS5XX_RESOLUTION_X 3072
-#    define AZOTEQ_IQS5XX_RESOLUTION_Y 2048
-#elif !defined(AZOTEQ_IQS5XX_WIDTH_MM) && !defined(AZOTEQ_IQS5XX_HEIGHT_MM)
-#    error "You must define one of the available azoteq trackpads or specify at least the width and height"
-#endif
-
 #define DIVIDE_UNSIGNED_ROUND(numerator, denominator) (((numerator) + ((denominator) / 2)) / (denominator))
 #define AZOTEQ_IQS5XX_INCH_TO_RESOLUTION_X(inch) (DIVIDE_UNSIGNED_ROUND((inch) * (uint32_t)AZOTEQ_IQS5XX_WIDTH_MM * 10, 254))
 #define AZOTEQ_IQS5XX_RESOLUTION_X_TO_INCH(px) (DIVIDE_UNSIGNED_ROUND((px) * (uint32_t)254, AZOTEQ_IQS5XX_WIDTH_MM * 10))
 #define AZOTEQ_IQS5XX_INCH_TO_RESOLUTION_Y(inch) (DIVIDE_UNSIGNED_ROUND((inch) * (uint32_t)AZOTEQ_IQS5XX_HEIGHT_MM * 10, 254))
 #define AZOTEQ_IQS5XX_RESOLUTION_Y_TO_INCH(px) (DIVIDE_UNSIGNED_ROUND((px) * (uint32_t)254, AZOTEQ_IQS5XX_HEIGHT_MM * 10))
 
+#ifdef POINTING_DEVICE_DRIVER_azoteq_iqs5xx
 const pointing_device_driver_t azoteq_iqs5xx_pointing_device_driver = {
     .init       = azoteq_iqs5xx_init,
     .get_report = azoteq_iqs5xx_get_report,
     .set_cpi    = azoteq_iqs5xx_set_cpi,
     .get_cpi    = azoteq_iqs5xx_get_cpi,
 };
+#endif
 
 static uint16_t azoteq_iqs5xx_product_number = AZOTEQ_IQS5XX_UNKNOWN;
 
@@ -351,6 +347,7 @@ void azoteq_iqs5xx_init(void) {
     }
 };
 
+#ifdef POINTING_DEVICE_ENABLE
 report_mouse_t azoteq_iqs5xx_get_report(report_mouse_t mouse_report) {
     report_mouse_t temp_report = {0};
 
@@ -414,3 +411,24 @@ report_mouse_t azoteq_iqs5xx_get_report(report_mouse_t mouse_report) {
 
     return temp_report;
 }
+#endif
+
+#ifdef DIGITIZER_ENABLE
+digitizer_t digitizer_driver_get_report(digitizer_t digitizer_report) {
+    azoteq_iqs5xx_digitizer_data_t digitizer_data = {0};
+    azoteq_iqs5xx_wake();
+
+    i2c_status_t status = i2c_read_register16(AZOTEQ_IQS5XX_ADDRESS, AZOTEQ_IQS5XX_REG_ABSOLUTE_X_POSITION, (uint8_t *)&digitizer_data, sizeof(azoteq_iqs5xx_digitizer_data_t), AZOTEQ_IQS5XX_TIMEOUT_MS);
+    if (status == I2C_STATUS_SUCCESS) {
+        for (int i = 0; i < 5; i++) {
+            digitizer_report.contacts[i].x          = AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(digitizer_data.fingers[i].x.h, digitizer_data.fingers[i].x.l);
+            digitizer_report.contacts[i].y          = AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(digitizer_data.fingers[i].y.h, digitizer_data.fingers[i].y.l);
+            digitizer_report.contacts[i].confidence = 1;
+            digitizer_report.contacts[i].tip        = AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(digitizer_data.fingers[i].strength.h, digitizer_data.fingers[i].strength.l) > 0 ? 1 : 0;
+            digitizer_report.contacts[i].type       = FINGER;
+        }
+        azoteq_iqs5xx_end_session();
+    }
+    return digitizer_report;
+}
+#endif

@@ -1,6 +1,7 @@
 {
     "usb": {
-        "device_version": "1.0.0"
+        "device_version": "1.0.0",
+        "pid": "0x5C47"
     },
     "diode_direction": "COL2ROW",
     "matrix_pins": {
